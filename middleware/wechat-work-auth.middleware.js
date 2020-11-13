@@ -104,7 +104,12 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                         return res.redirect(queryString.stringifyUrl(loginFailPathObj));
                     }
                     else {
-                        return res.redirect(`https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(returnDomainName + loginPath)}&state=STATE`);
+                        if (req.query.mobile === 'true') {
+                            return res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpId}&redirect_uri=${encodeURIComponent(returnDomainName + loginPath + '?mobile=true')}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`);
+                        }
+                        else {
+                            return res.redirect(`https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(returnDomainName + loginPath)}&state=STATE`);
+                        }
                     }
                 }
             }
