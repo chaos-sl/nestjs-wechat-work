@@ -62,7 +62,7 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.QueryUserInfoFail;
                         return res.redirect(queryString.stringifyUrl(loginFailPathObj));
                     }
-                    if (!userInfoData.enable || userInfoData.status !== 1) {
+                    if (userInfoData.status !== 1) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.UserInactive;
                         return res.redirect(queryString.stringifyUrl(loginFailPathObj));
                     }
