@@ -34,9 +34,8 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
       if (req.query.code) {
         let userIdData;
         try {
-          userIdData = await this.wechatWorkBaseService.getUserId(
-            req.query.code,
-          );
+          userIdData = await this.wechatWorkBaseService.getUserId(req.query
+            .code as string);
         } catch (err) {
           userIdData = {};
         }
@@ -91,11 +90,13 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
         const jwtToken = sign(userData, jwtSecret, {
           expiresIn: tokenExpires,
         });
-        return res.cookie(tokenName, jwtToken, {
-          httpOnly: true,
-          secure: false,
-          expires: new Date(Date.now() + tokenExpires * 1000),
-        }).redirect(loginSuccessPath);
+        return res
+          .cookie(tokenName, jwtToken, {
+            httpOnly: true,
+            secure: false,
+            expires: new Date(Date.now() + tokenExpires * 1000),
+          })
+          .redirect(loginSuccessPath);
       } else {
         if (req.query.state) {
           loginFailPathObj.query.result = AuthFailResult.UserRejectQrCode;

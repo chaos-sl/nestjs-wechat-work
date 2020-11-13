@@ -12,7 +12,7 @@ export class WechatWorkAuthService {
     this.config = config;
   }
 
-  async validateContext(ctx: any) {
+  async validateContext(ctx: any, mobile: boolean = false) {
     // noRedirectPaths 开头的地址跳转控制权交给前端
     let isNoRedirectPath = false;
 
@@ -92,13 +92,21 @@ export class WechatWorkAuthService {
     }
   }
 
-  redirectWechatWorkQrCodePage(ctx: any) {
+  redirectWechatWorkQrCodePage(ctx: any, mobile: boolean = false) {
     const { corpId, agentId } = this.config.baseConfig;
     const { returnDomainName, loginPath } = this.config.authConfig;
-    ctx.redirect(
-      `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(
-        returnDomainName + loginPath,
-      )}&state=STATE`,
-    );
+    if (mobile) {
+      ctx.redirect(
+        `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpId}&redirect_uri=${encodeURIComponent(
+          returnDomainName + loginPath + '?mobile=true',
+        )}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`,
+      );
+    } else {
+      ctx.redirect(
+        `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(
+          returnDomainName + loginPath,
+        )}&state=STATE`,
+      );
+    }
   }
 }
