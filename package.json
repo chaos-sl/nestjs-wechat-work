@@ -12,7 +12,6 @@
   "scripts": {
     "start:dev": "tsc -w",
     "build": "rm -rf dist && tsc && copyfiles package.json README.md dist",
-    "prepare": "npm run build",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
