@@ -36,6 +36,7 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const { corpId, agentId } = this.config.baseConfig;
             const { returnDomainName, loginPath, logoutPath, loginSuccessPath, loginFailPath, tokenName = constants_1.DEFAULT_TOKEN_NAME, tokenExpires = constants_1.DEFAULT_TOKEN_EXPIRES, jwtSecret, } = this.config.authConfig;
+            const redirectUri = req.query.redirect_uri || '/';
             const loginFailPathObj = queryString.parseUrl(loginFailPath);
             if (req.route.path === loginPath) {
                 if (req.query.code) {
@@ -96,7 +97,7 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                         secure: false,
                         expires: new Date(Date.now() + tokenExpires * 1000),
                     })
-                        .redirect(loginSuccessPath);
+                        .redirect(`${loginSuccessPath}/?redirect_uri=${redirectUri}`);
                 }
                 else {
                     if (req.query.state) {
@@ -105,10 +106,16 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                     }
                     else {
                         if (req.query.mobile === 'true') {
-                            return res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpId}&redirect_uri=${encodeURIComponent(returnDomainName + loginPath + '?mobile=true')}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`);
+                            return res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpId}&redirect_uri=${encodeURIComponent(returnDomainName +
+                                loginPath +
+                                '?mobile=true&redirect_uri=' +
+                                redirectUri)}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`);
                         }
                         else {
-                            return res.redirect(`https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(returnDomainName + loginPath)}&state=STATE`);
+                            return res.redirect(`https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(returnDomainName +
+                                loginPath +
+                                '?mobile=false&redirect_uri=' +
+                                redirectUri)}&state=STATE`);
                         }
                     }
                 }
