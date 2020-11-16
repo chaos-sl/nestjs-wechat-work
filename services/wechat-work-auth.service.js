@@ -52,7 +52,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                         return false;
                     }
                     else {
-                        this.redirectWechatWorkQrCodePage(ctx);
+                        this.redirectWechatWorkQrCodePage(ctx, mobile);
                     }
                 }
                 const [bearer, tokenFromAuthorization] = authorizationStr.split(' ');
@@ -61,7 +61,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                         throw new common_1.HttpException('Not found token', common_1.HttpStatus.UNAUTHORIZED);
                     }
                     else {
-                        this.redirectWechatWorkQrCodePage(ctx);
+                        this.redirectWechatWorkQrCodePage(ctx, mobile);
                     }
                 }
                 token = tokenFromAuthorization;
@@ -71,15 +71,15 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                     throw new common_1.HttpException('Not found token', common_1.HttpStatus.UNAUTHORIZED);
                 }
                 else {
-                    this.redirectWechatWorkQrCodePage(ctx);
+                    this.redirectWechatWorkQrCodePage(ctx, mobile);
                 }
             }
-            const user = yield this.validateUserToken(token, ctx, isNoRedirectPath);
+            const user = yield this.validateUserToken(token, ctx, isNoRedirectPath, mobile);
             ctx.req.user = user;
             return true;
         });
     }
-    validateUserToken(token, ctx, isNoRedirectPath) {
+    validateUserToken(token, ctx, isNoRedirectPath, mobile = false) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const verifiedToken = jsonwebtoken_1.verify(token, this.config.authConfig.jwtSecret);
@@ -88,7 +88,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                         throw new common_1.HttpException('Invalid token', common_1.HttpStatus.UNAUTHORIZED);
                     }
                     else {
-                        this.redirectWechatWorkQrCodePage(ctx);
+                        this.redirectWechatWorkQrCodePage(ctx, mobile);
                     }
                 }
                 return verifiedToken;
@@ -98,7 +98,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                     throw new common_1.HttpException('Invalid token', common_1.HttpStatus.UNAUTHORIZED);
                 }
                 else {
-                    this.redirectWechatWorkQrCodePage(ctx);
+                    this.redirectWechatWorkQrCodePage(ctx, mobile);
                 }
             }
         });

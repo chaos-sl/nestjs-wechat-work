@@ -4,6 +4,6 @@ export declare class WechatWorkAuthService {
     readonly config: WechatWorkConfig;
     constructor(config: WechatWorkConfig);
     validateContext(ctx: any, mobile?: boolean): Promise<boolean>;
-    validateUserToken(token: string, ctx: any, isNoRedirectPath: boolean): Promise<any>;
+    validateUserToken(token: string, ctx: any, isNoRedirectPath: boolean, mobile?: boolean): Promise<any>;
     redirectWechatWorkQrCodePage(ctx: any, mobile?: boolean): void;
 }
