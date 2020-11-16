@@ -27,6 +27,9 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
       tokenExpires = DEFAULT_TOKEN_EXPIRES,
       jwtSecret,
     } = this.config.authConfig;
+
+    const redirectUri = req.query.redirect_uri || '/';
+
     const loginFailPathObj = queryString.parseUrl(loginFailPath);
 
     if (req.route.path === loginPath) {
@@ -57,7 +60,7 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
           return res.redirect(queryString.stringifyUrl(loginFailPathObj));
         }
 
-        if (!userInfoData.enable || userInfoData.status !== 1) {
+        if (userInfoData.status !== 1) {
           loginFailPathObj.query.result = AuthFailResult.UserInactive;
           return res.redirect(queryString.stringifyUrl(loginFailPathObj));
         }
@@ -96,17 +99,31 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
             secure: false,
             expires: new Date(Date.now() + tokenExpires * 1000),
           })
-          .redirect(loginSuccessPath);
+          .redirect(`${loginSuccessPath}/?redirect_uri=${redirectUri}`);
       } else {
         if (req.query.state) {
           loginFailPathObj.query.result = AuthFailResult.UserRejectQrCode;
           return res.redirect(queryString.stringifyUrl(loginFailPathObj));
         } else {
-          return res.redirect(
-            `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(
-              returnDomainName + loginPath,
-            )}&state=STATE`,
-          );
+          if (req.query.mobile === 'true') {
+            return res.redirect(
+              `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpId}&redirect_uri=${encodeURIComponent(
+                returnDomainName +
+                  loginPath +
+                  '?mobile=true&redirect_uri=' +
+                  redirectUri,
+              )}&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect`,
+            );
+          } else {
+            return res.redirect(
+              `https://open.work.weixin.qq.com/wwopen/sso/qrConnect?appid=${corpId}&agentid=${agentId}&redirect_uri=${encodeURIComponent(
+                returnDomainName +
+                  loginPath +
+                  '?mobile=false&redirect_uri=' +
+                  redirectUri,
+              )}&state=STATE`,
+            );
+          }
         }
       }
     } else if (req.route.path === logoutPath) {

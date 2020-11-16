@@ -39,7 +39,7 @@ export class WechatWorkAuthService {
         if (isNoRedirectPath) {
           return false;
         } else {
-          this.redirectWechatWorkQrCodePage(ctx);
+          this.redirectWechatWorkQrCodePage(ctx, mobile);
         }
       }
 
@@ -48,7 +48,7 @@ export class WechatWorkAuthService {
         if (isNoRedirectPath) {
           throw new HttpException('Not found token', HttpStatus.UNAUTHORIZED);
         } else {
-          this.redirectWechatWorkQrCodePage(ctx);
+          this.redirectWechatWorkQrCodePage(ctx, mobile);
         }
       }
 
@@ -59,11 +59,16 @@ export class WechatWorkAuthService {
       if (isNoRedirectPath) {
         throw new HttpException('Not found token', HttpStatus.UNAUTHORIZED);
       } else {
-        this.redirectWechatWorkQrCodePage(ctx);
+        this.redirectWechatWorkQrCodePage(ctx, mobile);
       }
     }
 
-    const user = await this.validateUserToken(token, ctx, isNoRedirectPath);
+    const user = await this.validateUserToken(
+      token,
+      ctx,
+      isNoRedirectPath,
+      mobile,
+    );
     ctx.req.user = user;
     return true;
   }
@@ -72,14 +77,19 @@ export class WechatWorkAuthService {
    * 验证token是否有效
    * @param token String
    */
-  async validateUserToken(token: string, ctx: any, isNoRedirectPath: boolean) {
+  async validateUserToken(
+    token: string,
+    ctx: any,
+    isNoRedirectPath: boolean,
+    mobile: boolean = false,
+  ) {
     try {
       const verifiedToken = verify(token, this.config.authConfig.jwtSecret);
       if (!verifiedToken || !verifiedToken.userId) {
         if (isNoRedirectPath) {
           throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
         } else {
-          this.redirectWechatWorkQrCodePage(ctx);
+          this.redirectWechatWorkQrCodePage(ctx, mobile);
         }
       }
       return verifiedToken;
@@ -87,7 +97,7 @@ export class WechatWorkAuthService {
       if (isNoRedirectPath) {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       } else {
-        this.redirectWechatWorkQrCodePage(ctx);
+        this.redirectWechatWorkQrCodePage(ctx, mobile);
       }
     }
   }
