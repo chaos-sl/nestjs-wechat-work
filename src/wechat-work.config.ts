@@ -1,8 +1,8 @@
 export interface BaseConfig {
   corpId: string;
   agentId?: string;
-  agentSecret?: string;
-  contactsSecret?: string;
+  agentSecret: string;
+  contactsSecret?: string /* 获取成员详细信息,必填 */;
   telephoneSecret?: string;
   scheduleSecret?: string;
   customerSecret?: string;

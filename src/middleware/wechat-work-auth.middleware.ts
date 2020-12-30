@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import * as queryString from 'query-string';
@@ -10,6 +10,7 @@ import { getPathById, flatten } from '../utils';
 
 @Injectable()
 export class WechatWorkAuthMiddleware implements NestMiddleware {
+  logger = new Logger(this.constructor.name);
   constructor(
     private readonly config: WechatWorkConfig,
     private readonly wechatWorkBaseService: WechatWorkBaseService,
@@ -39,9 +40,12 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
         try {
           userIdData = await this.wechatWorkBaseService.getUserId(req.query
             .code as string);
+          // this.logger.debug('UserIdData:' + JSON.stringify(userIdData));
         } catch (err) {
           userIdData = {};
         }
+        // this.logger.debug('UserIdData:' + JSON.stringify(userIdData));
+
         if (!userIdData.UserId) {
           loginFailPathObj.query.result = AuthFailResult.QueryUserIdFail;
           return res.redirect(queryString.stringifyUrl(loginFailPathObj));
@@ -52,9 +56,11 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
           userInfoData = await this.wechatWorkContactsService.getUserInfo(
             userIdData.UserId,
           );
+          // this.logger.debug('UserInfoData:' + JSON.stringify(userInfoData));
         } catch (err) {
           userInfoData = {};
         }
+        // this.logger.debug('UserInfoData:' + JSON.stringify(userInfoData));
         if (!userInfoData.userid) {
           loginFailPathObj.query.result = AuthFailResult.QueryUserInfoFail;
           return res.redirect(queryString.stringifyUrl(loginFailPathObj));
@@ -69,9 +75,16 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
         let departmentInfoData;
         try {
           departmentInfoData = await this.wechatWorkContactsService.getAllDepartmentList();
+          // this.logger.debug(
+          //   'departmentInfoData:' + JSON.stringify(departmentInfoData),
+          // );
         } catch (err) {
           departmentInfoData = {};
         }
+        // this.logger.debug(
+        //   'departmentInfoData:' + JSON.stringify(departmentInfoData),
+        // );
+
         if (!departmentInfoData.errcode) {
           for (const item of userInfoData.department) {
             departmentDetail.push(
@@ -86,10 +99,16 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
           name: userInfoData.name,
           email: userInfoData.email,
           avatar: userInfoData.avatar,
+          phone: userInfoData.telephone,
+          mobile: userInfoData.mobile,
+          status: userInfoData.status,
+          nickName: userInfoData.alias,
           thumb_avatar: userInfoData.thumb_avatar,
+          address: userInfoData.address,
+          qr_code: userInfoData.qr_code,
           departmentDetail,
         };
-
+        // this.logger.debug('userData:' + JSON.stringify(userData));
         const jwtToken = sign(userData, jwtSecret, {
           expiresIn: tokenExpires,
         });
