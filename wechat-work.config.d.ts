@@ -1,7 +1,7 @@
 export interface BaseConfig {
     corpId: string;
     agentId?: string;
-    agentSecret?: string;
+    agentSecret: string;
     contactsSecret?: string;
     telephoneSecret?: string;
     scheduleSecret?: string;
