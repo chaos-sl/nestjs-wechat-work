@@ -31,6 +31,7 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
         this.config = config;
         this.wechatWorkBaseService = wechatWorkBaseService;
         this.wechatWorkContactsService = wechatWorkContactsService;
+        this.logger = new common_1.Logger(this.constructor.name);
     }
     use(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,10 +45,12 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                     try {
                         userIdData = yield this.wechatWorkBaseService.getUserId(req.query
                             .code);
+                        this.logger.debug('UserIdData:' + JSON.stringify(userIdData));
                     }
                     catch (err) {
                         userIdData = {};
                     }
+                    this.logger.debug('UserIdData:' + JSON.stringify(userIdData));
                     if (!userIdData.UserId) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.QueryUserIdFail;
                         return res.redirect(queryString.stringifyUrl(loginFailPathObj));
@@ -55,10 +58,12 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                     let userInfoData;
                     try {
                         userInfoData = yield this.wechatWorkContactsService.getUserInfo(userIdData.UserId);
+                        this.logger.debug('UserInfoData:' + JSON.stringify(userInfoData));
                     }
                     catch (err) {
                         userInfoData = {};
                     }
+                    this.logger.debug('UserInfoData:' + JSON.stringify(userInfoData));
                     if (!userInfoData.userid) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.QueryUserInfoFail;
                         return res.redirect(queryString.stringifyUrl(loginFailPathObj));
@@ -71,10 +76,12 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                     let departmentInfoData;
                     try {
                         departmentInfoData = yield this.wechatWorkContactsService.getAllDepartmentList();
+                        this.logger.debug('departmentInfoData:' + JSON.stringify(departmentInfoData));
                     }
                     catch (err) {
                         departmentInfoData = {};
                     }
+                    this.logger.debug('departmentInfoData:' + JSON.stringify(departmentInfoData));
                     if (!departmentInfoData.errcode) {
                         for (const item of userInfoData.department) {
                             departmentDetail.push(utils_1.flatten(utils_1.getPathById(item, departmentInfoData.department)));
@@ -88,6 +95,7 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                         thumb_avatar: userInfoData.thumb_avatar,
                         departmentDetail,
                     };
+                    this.logger.debug('userData:' + JSON.stringify(userData));
                     const jwtToken = jsonwebtoken_1.sign(userData, jwtSecret, {
                         expiresIn: tokenExpires,
                     });

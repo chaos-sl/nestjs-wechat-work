@@ -1,7 +1,13 @@
 {
   "name": "nestjs-wechat-work",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NestJS Module for WeChat Work",
+  "contributors": [
+    {
+      "name": "ShawFung Chao",
+      "email": "zhaoxiaochun@sailing3d.cn"
+    }
+  ],
   "author": "chf007 <chf007server@163.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
@@ -30,9 +36,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chf007/nestjs-wechat-work"
+    "url": "https://github.com/chaos-sl/nestjs-wechat-work"
   },
-  "bugs": "https://github.com/chf007/nestjs-wechat-work",
+  "bugs": "https://github.com/chaos-sl/nestjs-wechat-work",
   "peerDependencies": {
     "@nestjs/common": "^6.8.0",
     "@nestjs/core": "^6.8.0"
