@@ -87,7 +87,7 @@ let WechatWorkBaseService = WechatWorkBaseService_1 = class WechatWorkBaseServic
                 this.logger.log(`[getUserId] code cannot be empty`);
                 throw new common_1.HttpException('[getUserId] code cannot be empty', common_1.HttpStatus.BAD_REQUEST);
             }
-            const accessToken = yield this.getAccessToken(interfaces_1.AgentType.Contacts);
+            const accessToken = yield this.getAccessToken(interfaces_1.AgentType.Custom);
             const result = yield this.httpService
                 .get(`${this.apiServer}/cgi-bin/user/getuserinfo?access_token=${accessToken}&code=${code}`)
                 .toPromise();
