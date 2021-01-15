@@ -37,7 +37,8 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
         return __awaiter(this, void 0, void 0, function* () {
             const { corpId, agentId } = this.config.baseConfig;
             const { returnDomainName, loginPath, logoutPath, loginSuccessPath, loginFailPath, tokenName = constants_1.DEFAULT_TOKEN_NAME, tokenExpires = constants_1.DEFAULT_TOKEN_EXPIRES, jwtSecret, } = this.config.authConfig;
-            const redirectUri = req.query.redirect_uri || '/';
+            const redirectUri = decodeURIComponent((req.query.redirect_uri ||
+                '/'));
             const loginFailPathObj = queryString.parseUrl(loginFailPath);
             if (req.route.path === loginPath) {
                 if (req.query.code) {
