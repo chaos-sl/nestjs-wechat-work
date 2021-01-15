@@ -51,7 +51,7 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                     }
                     if (!userIdData.UserId) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.QueryUserIdFail;
-                        return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+                        return res.redirect(returnDomainName + queryString.stringifyUrl(loginFailPathObj));
                     }
                     let userInfoData;
                     try {
@@ -62,11 +62,11 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                     }
                     if (!userInfoData.userid) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.QueryUserInfoFail;
-                        return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+                        return res.redirect(returnDomainName + queryString.stringifyUrl(loginFailPathObj));
                     }
                     if (userInfoData.status !== 1) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.UserInactive;
-                        return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+                        return res.redirect(returnDomainName + queryString.stringifyUrl(loginFailPathObj));
                     }
                     const departmentDetail = [];
                     let departmentInfoData;
@@ -104,12 +104,12 @@ let WechatWorkAuthMiddleware = class WechatWorkAuthMiddleware {
                         secure: false,
                         expires: new Date(Date.now() + tokenExpires * 1000),
                     })
-                        .redirect(`${loginSuccessPath}/?redirect_uri=${redirectUri}`);
+                        .redirect(`${returnDomainName}${loginSuccessPath}/?redirect_uri=${redirectUri}`);
                 }
                 else {
                     if (req.query.state) {
                         loginFailPathObj.query.result = interfaces_1.AuthFailResult.UserRejectQrCode;
-                        return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+                        return res.redirect(returnDomainName + queryString.stringifyUrl(loginFailPathObj));
                     }
                     else {
                         if (req.query.mobile === 'true') {
