@@ -1,5 +1,5 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { sign } from 'jsonwebtoken';
 import * as queryString from 'query-string';
 import { WechatWorkConfig } from '../wechat-work.config';
@@ -16,7 +16,7 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
     private readonly wechatWorkBaseService: WechatWorkBaseService,
     private readonly wechatWorkContactsService: WechatWorkContactsService,
   ) {}
-  async use(req: Request, res: Response, next: Function) {
+  async use(req: Request, res: Response, next: NextFunction) {
     const { corpId, agentId } = this.config.baseConfig;
     const {
       returnDomainName,

@@ -19,6 +19,7 @@ export class WechatWorkAuthService {
     for (const item of this.config.authConfig.noRedirectPaths) {
       if (ctx.req.route.path.indexOf(item) === 0) {
         isNoRedirectPath = true;
+        this.logger.debug(`No Redirect ` + item);
         break;
       }
     }
@@ -31,6 +32,7 @@ export class WechatWorkAuthService {
 
     if (tokenFromCookie) {
       token = tokenFromCookie;
+      this.logger.debug(`Token From Cookie ` + token);
     } else {
       // 如果cookie中没有token再从header中取authorization
       const authorizationStr = ctx.req.headers && ctx.req.headers.authorization;
@@ -39,6 +41,7 @@ export class WechatWorkAuthService {
         if (isNoRedirectPath) {
           return false;
         } else {
+          this.logger.debug(`No Authorization String , Redirect to QRCode`);
           this.redirectWechatWorkQrCodePage(ctx, mobile);
         }
       }
@@ -48,6 +51,9 @@ export class WechatWorkAuthService {
         if (isNoRedirectPath) {
           throw new HttpException('Not found token', HttpStatus.UNAUTHORIZED);
         } else {
+          this.logger.debug(
+            `No Token String Or Not Bearer, Redirect to QRCode`,
+          );
           this.redirectWechatWorkQrCodePage(ctx, mobile);
         }
       }
@@ -59,6 +65,7 @@ export class WechatWorkAuthService {
       if (isNoRedirectPath) {
         throw new HttpException('Not found token', HttpStatus.UNAUTHORIZED);
       } else {
+        this.logger.debug(`No Token At All , Redirect to QRCode`);
         this.redirectWechatWorkQrCodePage(ctx, mobile);
       }
     }
@@ -89,6 +96,8 @@ export class WechatWorkAuthService {
         if (isNoRedirectPath) {
           throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
         } else {
+          this.logger.debug(`Token Invalid , Redirect to QRCode`);
+
           this.redirectWechatWorkQrCodePage(ctx, mobile);
         }
       }
@@ -97,6 +106,9 @@ export class WechatWorkAuthService {
       if (isNoRedirectPath) {
         throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       } else {
+        console.debug(e);
+
+        this.logger.debug(`Verify Token Exception , Redirect to QRCode`);
         this.redirectWechatWorkQrCodePage(ctx, mobile);
       }
     }
