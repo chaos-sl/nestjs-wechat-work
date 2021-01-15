@@ -48,7 +48,9 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
 
         if (!userIdData.UserId) {
           loginFailPathObj.query.result = AuthFailResult.QueryUserIdFail;
-          return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+          return res.redirect(
+            returnDomainName + queryString.stringifyUrl(loginFailPathObj),
+          );
         }
 
         let userInfoData;
@@ -63,12 +65,16 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
         // this.logger.debug('UserInfoData:' + JSON.stringify(userInfoData));
         if (!userInfoData.userid) {
           loginFailPathObj.query.result = AuthFailResult.QueryUserInfoFail;
-          return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+          return res.redirect(
+            returnDomainName + queryString.stringifyUrl(loginFailPathObj),
+          );
         }
 
         if (userInfoData.status !== 1) {
           loginFailPathObj.query.result = AuthFailResult.UserInactive;
-          return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+          return res.redirect(
+            returnDomainName + queryString.stringifyUrl(loginFailPathObj),
+          );
         }
 
         const departmentDetail = [];
@@ -118,11 +124,15 @@ export class WechatWorkAuthMiddleware implements NestMiddleware {
             secure: false,
             expires: new Date(Date.now() + tokenExpires * 1000),
           })
-          .redirect(`${loginSuccessPath}/?redirect_uri=${redirectUri}`);
+          .redirect(
+            `${returnDomainName}${loginSuccessPath}/?redirect_uri=${redirectUri}`,
+          );
       } else {
         if (req.query.state) {
           loginFailPathObj.query.result = AuthFailResult.UserRejectQrCode;
-          return res.redirect(queryString.stringifyUrl(loginFailPathObj));
+          return res.redirect(
+            returnDomainName + queryString.stringifyUrl(loginFailPathObj),
+          );
         } else {
           if (req.query.mobile === 'true') {
             return res.redirect(
