@@ -35,6 +35,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
             for (const item of this.config.authConfig.noRedirectPaths) {
                 if (ctx.req.route.path.indexOf(item) === 0) {
                     isNoRedirectPath = true;
+                    this.logger.debug(`No Redirect ` + item);
                     break;
                 }
             }
@@ -44,6 +45,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
             const tokenFromCookie = cookies[tokenName] || '';
             if (tokenFromCookie) {
                 token = tokenFromCookie;
+                this.logger.debug(`Token From Cookie ` + token);
             }
             else {
                 const authorizationStr = ctx.req.headers && ctx.req.headers.authorization;
@@ -52,6 +54,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                         return false;
                     }
                     else {
+                        this.logger.debug(`No Authorization String , Redirect to QRCode`);
                         this.redirectWechatWorkQrCodePage(ctx, mobile);
                     }
                 }
@@ -61,6 +64,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                         throw new common_1.HttpException('Not found token', common_1.HttpStatus.UNAUTHORIZED);
                     }
                     else {
+                        this.logger.debug(`No Token String Or Not Bearer, Redirect to QRCode`);
                         this.redirectWechatWorkQrCodePage(ctx, mobile);
                     }
                 }
@@ -71,6 +75,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                     throw new common_1.HttpException('Not found token', common_1.HttpStatus.UNAUTHORIZED);
                 }
                 else {
+                    this.logger.debug(`No Token At All , Redirect to QRCode`);
                     this.redirectWechatWorkQrCodePage(ctx, mobile);
                 }
             }
@@ -88,6 +93,7 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                         throw new common_1.HttpException('Invalid token', common_1.HttpStatus.UNAUTHORIZED);
                     }
                     else {
+                        this.logger.debug(`Token Invalid , Redirect to QRCode`);
                         this.redirectWechatWorkQrCodePage(ctx, mobile);
                     }
                 }
@@ -98,6 +104,8 @@ let WechatWorkAuthService = WechatWorkAuthService_1 = class WechatWorkAuthServic
                     throw new common_1.HttpException('Invalid token', common_1.HttpStatus.UNAUTHORIZED);
                 }
                 else {
+                    console.debug(e);
+                    this.logger.debug(`Verify Token Exception , Redirect to QRCode`);
                     this.redirectWechatWorkQrCodePage(ctx, mobile);
                 }
             }
